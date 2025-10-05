@@ -1,0 +1,37 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Build Docker images
+      run: |
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend-app ./frontend
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/backend-app ./backend
+
+    - name: Push to Docker Hub
+      run: |
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+        docker push ${{ secrets.DOCKER_USERNAME }}/frontend-app
+        docker push ${{ secrets.DOCKER_USERNAME }}/backend-app
+
+    - name: SSH into EC2 and deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.VM_HOST }}
+        username: ${{ secrets.VM_USER }}
+        key: ${{ secrets.VM_SSH_KEY }}
+        script: |
+          cd /home/ubuntu/devops-app
+          docker-compose pull
+          docker-compose down
+          docker-compose up -d
