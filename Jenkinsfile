@@ -1,9 +1,9 @@
 pipeline {
   agent {
   docker {
-    image 'node-docker-agent'
-    args '-v /var/run/docker.sock:/var/run/docker.sock'
-  }
+        image 'jenkins-node-docker-agent:latest'
+        args '-v /var/run/docker.sock:/var/run/docker.sock'
+    }
 }
 
   parameters {
