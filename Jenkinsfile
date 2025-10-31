@@ -1,9 +1,10 @@
 pipeline {
   agent {
-    docker {
-      image 'node:18'
-    }
-    }
+  docker {
+    image 'node-docker-agent'
+    args '-v /var/run/docker.sock:/var/run/docker.sock'
+  }
+}
 
   parameters {
     string(name: 'REPO_URL', defaultValue: 'https://github.com/PriyankaRavee/nodejs-frontend-backend.git', description: 'Git repository URL')
