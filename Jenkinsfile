@@ -38,16 +38,18 @@ pipeline {
     }
 
     stage('Build Docker Image') {
-      steps {
-        sh "docker build -t ${DOCKER_IMAGE} ."
-      }
+        steps {
+            sh "docker build -t ${DOCKER_IMAGE} ."
+        }
     }
 
+
     stage('Run Container') {
-      steps {
-        sh "docker run -d -p ${CONTAINER_PORT}:${CONTAINER_PORT} ${DOCKER_IMAGE}"
-      }
+        steps {
+            sh "docker run -d -p ${CONTAINER_PORT}:${CONTAINER_PORT} ${DOCKER_IMAGE}"
+        }
     }
+
   }
 
   post {
