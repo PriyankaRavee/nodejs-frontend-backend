@@ -1,5 +1,9 @@
 pipeline {
-  agent any
+  agent {
+    docker {
+      image 'node:18'
+    }
+    }
 
   parameters {
     string(name: 'REPO_URL', defaultValue: 'https://github.com/PriyankaRavee/nodejs-frontend-backend.git', description: 'Git repository URL')
