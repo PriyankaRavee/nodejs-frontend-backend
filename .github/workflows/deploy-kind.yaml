@@ -1,0 +1,40 @@
+name: Deploy Node.js backend to kind
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Install kind
+      uses: helm/kind-action@v1.8.0
+
+    - name: Create kind cluster
+      run: kind create cluster --wait 60s
+
+    - name: Build Docker image from backend folder
+      run: docker build -t backend-app:latest ./backend
+
+    - name: Load image into kind
+      run: kind load docker-image backend-app:latest
+
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
+        kubectl get pods
+        kubectl get svc
+
+    - name: Deploy Ingress (optional)
+      run: |
+        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.4/deploy/static/provider/kind/deploy.yaml
+        kubectl apply -f k8s/ingress.yaml
+        kubectl get ingress
