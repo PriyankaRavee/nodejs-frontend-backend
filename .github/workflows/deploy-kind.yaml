@@ -28,7 +28,7 @@ jobs:
 
     - name: Debug file paths
       run: ls -R
-      
+
     - name: Deploy to Kubernetes
       run: |
         kubectl apply -f k8s/deployment.yaml
@@ -39,5 +39,18 @@ jobs:
     - name: Deploy Ingress (optional)
       run: |
         kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.4/deploy/static/provider/kind/deploy.yaml
+        kubectl apply -f k8s/ingress.yaml
+        kubectl get ingress
+        
+    - name: Wait for Ingress Controller to be ready
+      run: |
+        echo "Waiting for ingress-nginx-controller to be ready..."
+        kubectl wait --namespace ingress-nginx \
+          --for=condition=ready pod \
+          --selector=app.kubernetes.io/component=controller \
+          --timeout=180s
+
+    - name: Deploy ingress
+      run: |
         kubectl apply -f k8s/ingress.yaml
         kubectl get ingress
