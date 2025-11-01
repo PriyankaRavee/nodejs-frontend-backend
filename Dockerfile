@@ -1,12 +1,21 @@
 FROM node:18
 
-# Install Docker CLI
-RUN apt-get update && apt-get install -y docker.io
+# Install Docker CLI and OpenSSH server
+RUN apt-get update && apt-get install -y docker.io openssh-server
 
-# Install any other tools needed (optional)
-RUN apt-get install -y git curl
+# Create Jenkins user
+RUN useradd -m -s /bin/bash jenkins
 
-WORKDIR /app
+# Set up SSH directory
+RUN mkdir -p /home/jenkins/.ssh && \
+    chown -R jenkins:jenkins /home/jenkins/.ssh && \
+    chmod 700 /home/jenkins/.ssh
 
-# Default command keeps container running
-CMD ["tail", "-f", "/dev/null"]
+# Set password (optional for testing)
+RUN echo 'jenkins:jenkins' | chpasswd
+
+# Start SSH service
+RUN mkdir /var/run/sshd
+EXPOSE 22
+
+CMD ["/usr/sbin/sshd", "-D"]
