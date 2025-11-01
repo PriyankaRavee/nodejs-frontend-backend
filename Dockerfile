@@ -1,21 +1,22 @@
-FROM node:18
+# Dockerfile for jenkins-node-docker-agent
+FROM ubuntu:22.04
 
-# Install Docker CLI and OpenSSH server
-RUN apt-get update && apt-get install -y docker.io openssh-server
+RUN apt-get update && apt-get install -y \
+    openssh-server \
+    docker.io \
+    nodejs \
+    npm \
+    sudo
 
 # Create Jenkins user
-RUN useradd -m -s /bin/bash jenkins
+RUN useradd -m -s /bin/bash jenkins && \
+    echo "jenkins ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# Set up SSH directory
-RUN mkdir -p /home/jenkins/.ssh && \
-    chown -R jenkins:jenkins /home/jenkins/.ssh && \
-    chmod 700 /home/jenkins/.ssh
-
-# Set password (optional for testing)
-RUN echo 'jenkins:jenkins' | chpasswd
-
-# Start SSH service
+# Setup SSH
 RUN mkdir /var/run/sshd
-EXPOSE 22
+RUN mkdir -p /home/jenkins/.ssh
+COPY authorized_keys /home/jenkins/.ssh/authorized_keys
+RUN chown -R jenkins:jenkins /home/jenkins/.ssh && chmod 600 /home/jenkins/.ssh/authorized_keys
 
+EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]
