@@ -26,6 +26,9 @@ jobs:
     - name: Load image into kind
       run: kind load docker-image backend-app:latest
 
+    - name: Debug file paths
+      run: ls -R
+      
     - name: Deploy to Kubernetes
       run: |
         kubectl apply -f k8s/deployment.yaml
