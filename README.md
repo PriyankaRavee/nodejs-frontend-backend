@@ -17,9 +17,10 @@ This guide documents the setup of a Jenkins master-agent architecture using Dock
 
 ---
 
-## 🚀 Setup Steps
+## Setup Steps
 
-### 1. Create Docker Network
+### 1. Create Docker Network and jenkins Initial setup
+
 
 ```bash
 docker network create jenkins-net# nodejs-frontend-backend
