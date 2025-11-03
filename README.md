@@ -49,19 +49,19 @@ docker run -d --name nodejs-agent \
 
 docker network connect jenkins-net nodejs-agent
 
-###4. Copy Private Key to Jenkins
+### 4. Copy Private Key to Jenkins
 docker cp /c/jenkins-keys/Nodejs-agent-key jenkins:/var/jenkins_home/.ssh/jenkins-key
 docker exec -it jenkins bash
 chmod 600 /var/jenkins_home/.ssh/jenkins-key
 chown -R jenkins:jenkins /var/jenkins_home/.ssh
 
-###5. Copy Public Key to Agent
+### 5. Copy Public Key to Agent
 docker cp /c/jenkins-keys/Nodejs-agent-key.pub nodejs-agent:/home/jenkins/.ssh/authorized_keys
 docker exec -it nodejs-agent bash
 chmod 600 /home/jenkins/.ssh/authorized_keys
 chown -R jenkins:jenkins /home/jenkins/.ssh
 
-###6.docker exec -it jenkins bash
+### 6.docker exec -it jenkins bash
 ssh -i /var/jenkins_home/.ssh/jenkins-key jenkins@nodejs-agent
 
 
